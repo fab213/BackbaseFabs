@@ -1,0 +1,310 @@
+
+Exercise 01: Pages and Master Pages
+
+	1. Create a portal (suggested name ACME Bank)
+	2. Create a master page that extends from Retail Banking Master Page, and use the Retail Banking Demo Page Template (Suggested name: ACME Master Page)
+	3. This master page will have only one manageable area
+	4. Create a page (suggested name Credit Cards)
+	5. This page must extend the newly created master page
+	6. Preview the blank page
+
+*************************************************************************************************************************************************************************************
+
+Exercise 02: Catalogs
+
+	1. Portal Catalog
+		* Open the portal created in the first exercise
+		* Open its catalog: it is almost empty (only with basic items)
+			- Add these widgets to the catalog: content, navigation, and columns (not columns container)
+
+	2. Portal Content
+		* Go to the portal content and upload three images (see images below)
+
+	3. Master page improvement
+		* Open the previously created master page and:
+			- Add the content widget on top of the manageable area
+			- Change the content widget template to Image
+			- Drag an image (suggestion: header-city.jpeg)
+
+	4. Page improvement
+		* See the page that uses the recently created master page
+			- Change the page
+				add a columns container with two columns (by default it has three columns)
+				add a content widget into the first column with some labels and an image (suggestion: banner-creditcard.png)
+			- Preview the page
+
+		* Rename the Default Page to Home and change it to use your master page
+			- Preview the page
+
+*************************************************************************************************************************************************************************************
+
+Exercise 03: Links
+
+	1. Master page improvement
+		* Open the previously created master page and:
+			- Add  the navigation widget on the top and change its properties, dragging and dropping the navigation root to be the navigation source and changing the depth to 2 levels
+		* Preview using one of the pages
+
+	2. Page links: 
+		* Create a page in the main navigation section (e.g. Insurance). 
+		* Add a columns container 
+		* Add a content widget into the first column 
+		* Add some text and image (suggestion life-insurance.jpg)
+
+	3. External link: 
+		* Create an external link (e.g. Backbase) pointing to http://www.backbase.com. 
+
+	4. Friendly URL: 
+		* Create a friendly URL for the insurance page (e.g. using the simple name ins) 
+		* Access the friendly URL using your browser
+
+	5. Not in navigation:
+		* Create a new page (e.g. ACME Card) with more information about the ACME card in the ”not in navigation” section 
+		* Edit the Credit Card page.Use the content widget inside the page and provide a link to the ACME Card page.
+
+*************************************************************************************************************************************************************************************
+
+Exercise 04: Personalization
+
+	1. Update the Portal catalog:
+		* Open the previously created portal
+		* Add the Transactions widget items into the Portal Catalog
+
+	2. Page creation
+		* Create a new page (suggested name is My Transactions)
+
+		* Inside the page, add a columns container with two columns
+
+		* Add the Transactions widget into the first column
+
+		* Enable chrome
+			- Go to the explorer (left-hand side menu)
+			- Find the widget that had been just added into the page
+				Portals > Personalization > Items > My Contacts > Manageable Area > Columns Container > Transactions
+			- Change the property value of widgetChrome to use the following value
+				$(contextRoot)/static/backbase.com.2012.aurora/html/chromes/widget_default.html
+
+		* Change the property called transactionListSize, and make the following changes to the viewHint field:
+			- Change the value manager to user. Now the property can be personalized by users
+			- Still in the explorer, change the permissions of the property for the group user to creator.
+
+		* Go back to the page managementChanging permissions:
+			- Change the columns container permissions so that users can personalize the content
+
+		* Testing changes:
+			- Open the page using a regular user account (e.g. user account, password)
+				To work properly you must enable mocks,  by adding a query parameter at the end of the URL
+					e.g. http://localhost:7777/portalserver/acme-bank/my-transactions?enable-mocks
+			- Using the chrome:
+				Edit the widget preferences
+				Change the number of items per page and refresh the widget
+			- Open the page using another type of user (manager for example)
+				Check the number of items per page (must be the same based on factory settings)
+			- Open the page using the previous user
+	 			Check the number of items per page (must be your personalized property)
+
+*************************************************************************************************************************************************************************************
+
+Exercise 05: Security
+
+	1. Group creation:
+		* Create two groups:
+			- premium customers
+			- standard customers
+
+		* Create some users that belong to one of the newly created groups
+
+	2. Authorization
+		* Change the portal permission
+			- Allow premium and standard customers to view the portal
+
+		* Change your credit cards page
+			- Add a content widget inside the second column of the columns container. 
+				This content widget will display credit card information for standard customers. 
+				The first content widget will display credit card information for premium customers.
+
+		* Change the authorization
+			- Premium customers can view the widget in the first column
+			- Standard customers can view the widget in the second column
+
+	3. Test the page
+			- Access the credit card page using a standard customer
+			- Access the credit card page using a premium customer
+
+*************************************************************************************************************************************************************************************
+
+Exercise 06: Targeting
+
+	1. Create a new page called Targeting
+		* Add a columns container with two columns
+		* Add a new targeting container in the first and the second column
+		* For the first column use the coin collector (heads/tails)
+		* For the second column use the session collector
+		* Use the Portal User collector and the Portal Group selector to create the rules
+
+*************************************************************************************************************************************************************************************
+
+Exercise 07: Creating a Hello World Widget
+
+	1. Open the terminal window 
+	2. Enter into your project directory 
+	3. Point to the statics folder 
+	4. Create (if it does not exist) a folder called collection-training 
+	5. Enter into the collection-training/src folder 
+	6. Run 
+		bb-generate widget ng 
+			- Name widget-training-hello-world-ng 
+			- Title Hello World 
+			- Description Hello world 
+			- Version 0.1.0-alpha.0 
+			- Do you want to create an extension now? Yes 
+			- Do you want to create a model now, to connect the widget with APIs? No 
+
+			NOTA: Crea dos carpetas:
+				ext-training-hello-world-ng
+				widget-training-hello-world-ng
+
+	7. Congrats: We have just created a widget skeleton. However, the widget is not in the portal yet 
+		* Go to the extension generated folder (ext-training-hello-world-ng) and list its contents 
+			- Open the model.xml descriptor 
+			- Edit the HTML: templates/template.ng.html
+			- Add some paragraph
+
+*************************************************************************************************************************************************************************************
+
+Exercise 08: Deploying the Hello World Widget
+
+	1. Importing the widget: 
+		* Go to the statics/collection-training/src folder 
+		* run the following commands:
+			bb-package . 
+			bb-import package.zip 
+
+	2. Check if the widget is available in the enterprise catalog
+
+	3. Using the widget:
+		* Add this widget to the portal demo catalogCreate a page that uses the widget
+
+*************************************************************************************************************************************************************************************
+
+Exercise 09:
+
+	1. Open your CXP manager and import this item into your Catalog
+		- content-structured-author.zip
+
+*************************************************************************************************************************************************************************************
+
+Exercise 10: Disabling CSRF Protection
+
+	1. Open configuration/src/main/resource/backbase.properties
+	2. Find the entry foundation.csrf.protection.enabled
+	3. Uncomment this entry and set the value to false
+	4. Recompile configuration (mvn clean install) [your-project]/configuration
+	5. Restart the Portal
+		To find out more: https://my.backbase.com/docs/product-documentation/documentation/portal/5.6.0/rest_csrf.html#/list
+
+*************************************************************************************************************************************************************************************
+
+Exercise 11: Examples of API calls
+
+Getting portals with the string retail
+http://localhost:7777/portalserver/portals?f=name(like)retail
+
+Getting pages with the title containing the string contact
+http://localhost:7777/portalserver/portals/retail-banking-demo/pages?f=property.title(like)contact
+
+Getting the list of pages in descending order
+http://localhost:7777/portalserver/portals/retail-banking-demo/pages?s=property.title(dsc)
+
+Paging results
+http://localhost:7777/portalserver/catalog?ps=10&of=0 (first page with 10 elements) 
+http://localhost:7777/portalserver/catalog?ps=10&of=10 (second page with 10 elements)
+
+Processing chllds
+http://localhost:7777/portalserver/portals/retail-banking-demo/pages?f=property.title(eq)Home&pc=true&depth=3
+
+Optional: Creating a navigation root link
+A navigation root link can be created by making a call to the portal API. The example below will create a root link called “My navigation root”, and can be used by navigation widgets.
+
+
+POST http://localhost:7777/portalserver/portals/<your-portal>/links (mime type must be application/xml)
+<link>
+     <name>mynavroot</name>
+     <properties>
+          <property name="itemType" manageable="true">
+             <value type="string">menuHeader</value>
+          </property>
+          <property name="title" manageable="true">
+             <value type="string">My Navigation Root</value>
+          </property>
+     </properties>
+</link>
+
+Link to the documentation
+https://my.backbase.com/docs/product-documentation/documentation//portal/5.6.3/references_rest.html
+
+Path to the documentation
+My Backbase >     Docs > Product Documentation > CXP > References > REST API
+
+Disabling CSFR protection in your development environment
+	* Open configuration/src/main/resources/backbase.properties file
+	* Change the following property:
+		- foundation.csrf.protection.enabled=false
+	* Return back to the configuration folder
+	* Compile the project using the command
+		mvn clean install
+	* Restart the whole portal 
+
+Listing widgets from a page
+
+Solution: http://localhost:7777/portalserver/portals/acme-bank/widgets?s=name(asc)
+
+Solution: Creating a user
+
+POST http://localhost:7777/portalserver/users
+Body: Content-type: application/xml
+<user>
+    <username>marcos</username>
+    <password>123456</password>
+    <enabled>true</enabled>
+    <groups>
+        <group>
+            <name>admin</name>
+        </group>
+    </groups>
+    <properties/>
+</user>
+
+
+
+
+HTTP Status codes and their meaning
+https://my.backbase.com/docs/product-documentation/documentation//portal/5.6.3/rest_portalservices_httpcodes.html
+
+
+Architectures
+https://my.backbase.com/docs/product-documentation/documentation//portal/5.6.2/overview_eachenvironment.html
+ 
+
+
+*************************************************************************************************************************************************************************************
+
+NOTAS:
+
+Publishing Approves
+	* En la instalación estándar, para ser un aprobador debe pertenecer a uno de estos grupos:
+		- orchestrator.approvalgroups=admin,manager,approvers
+	* Este archivo se puede encontrar en /configuration/src/main/resources/backbase.properties de su proyecto CXP
+
+
+URLS
+
+https://my.backbase.com/docs/product-documentation/documentation//portal/5.6.2/install_overview.html
+
+https://my.backbase.com/docs/product-documentation/documentation/portal/5.6.0/rest_csrf.html#/list
+https://my.backbase.com/docs/product-documentation/documentation//portal/5.6.3/references_rest.html
+
+
+https://my.backbase.com/docs/product-documentation/documentation//portal/5.6.3/references_rest.html
+
+

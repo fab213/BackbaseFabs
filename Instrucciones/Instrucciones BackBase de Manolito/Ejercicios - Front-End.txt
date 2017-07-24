@@ -1,0 +1,818 @@
+
+Ejercicios:
+
+---------  Ejercicio 1 - Theme  -----------------------------------------------------------------------------------------------------------------------------
+
+
+	1. Create your own theme
+
+		Install the tooling
+
+			1. Install bb-customize command
+
+				npm install --global @bb-cli/bb-customize
+
+			2. Check that bb-customize was properly installed
+
+				bb-customize --help
+
+			3. Install SASS Plugin
+
+				npm install -g @bb-cli/bb-build-plugin-sass
+
+
+		Get your own theme copy
+			1. Navigate to statics folder
+			2. Copy the default theme from the source folder to create your own theme.
+
+				bb-customize item theme-bb-retail collection-training/src --new-name theme-training-default
+
+				NOTA: te crea la carpeta theme-training-default
+
+
+		Customize your theme
+			1. Navigate to statics/collection-training/src/theme-training-default
+				1. edit model.xml
+					1. Replace Theme for Retail Banking Collection by Theme Training Default
+					2. Replace the version value by 0.0.1
+
+		Import to CXP Manager
+			1. Navigate to statics
+			2. Use bb-cli to package your items:
+
+				bb-package collection-training/src --prebuilt=collection-training/prebuilt -b sass --exclude-defaults
+
+			Check if a package.zip file has been created.
+
+			3. Use bb-cli to import your items:
+
+				bb-import package.zip
+
+		Create the Training Portal
+			1. Click on "Create Portal"
+			2. Title: "Training Portal"
+			3. Click on "Create".
+
+		Setup a Master Page
+			1. Go to your portal catalog
+			2. In the Enterprise Catalog Section look for Retail Banking Master Page
+			3. Add the Retail Banking Master Page to your portal
+			4. Edit the preferences of the Master Page, set Theme Name to: theme-training-default (pre theme-bb-retail)
+			5. Save your changes
+
+
+		Note: If the Theme Name property doesn't show up in the preferences form:
+			Go to the Explorer App
+			Inspect the preferences of the Retail Banking Master Page
+			set the viewHint attribute of the themeName property to designModeOnly,manager
+			Save and return to your portal.
+
+---------  Ejercicio 2 - Contactos LEGO  -----------------------------------------------------------------------------------------------------------------------------
+
+	2. Using Contacts Widget
+
+		Add Contacts Widget to your portal
+
+			1. Open your portal catalog
+			2. At the bottom of the page you can see the Enterprise Catalog section:
+				1. Type Contact in the filter-box to find the widget:
+				2. Click on the Contact Manager widget to add it to your portal.
+			3. Open your portal
+			4. Create a new page "contacts". (Check that master page for it is the one that you created: mp-training)
+			5. Drop the widget in your contacts page.
+
+		Enable mock data collection
+			We're going to use mocked data for this exercise in order to be able to work with some contacts.
+				1. Open your portal
+				2. Open any existing page (ex: contacts)
+				3. Preview your page. (Preview button is the top right of the editable area)
+				4. Add the following parameter to your url: ?enable-mocks
+
+		Notes
+			You need to enable mocks once per session
+			If you want to disable mocks, just add the following parameter to your url -preview mode- ?disable-mocks
+
+		Switch Extensions
+			1. Open your portal
+			2. Drop another Contact Manager widget in the same page before the one that is already in the page.
+			3. Click on it to see the widget top bar.
+			4. Click in the settings icon to see the preferences dialog.
+			5. Change the title of the widget to Contact Details
+			6. Change the Extension property value to
+				ext-bbm-contact-details-ng
+			7. Click in the page link to refresh the widgets.
+			8. Now the Contact Details widget will look empty.
+
+			Contact Details extension requires to click in one existing contact to show the details.
+
+			9. Click in one of the contacts in Contact Manager widget and Contact Details widget will show the details of the contact you clicked.
+
+		Generate extension
+			1. Generate an extension using the generator
+
+				1. Navigate to statics/collection-training/src folder
+				2. Run:
+
+					bb-generate ext-ng
+
+			2. Answers to generate the extension:
+
+					Name                == >     ext-training-contact-tiles-ng
+					Description         -        --- Accept default value ---   
+					WidgetController    == >     ContactController        
+					Version             -        --- Accept default value ---
+
+
+		Add markup
+			1. Open the file statics/collection-training/src/ext-training-contact-tiles-ng/templates/template.ng.html
+			2. Replace the content of that file by the following snippet
+
+				<section class="ext-training-contact-tiles-ng" ng-controller="ContactController as $ctrl">
+				    <div class="container-fluid">
+				        <header class="row text-center">Contacts</header>
+				        <div class="row">
+				            <ul>
+				                <li class="contact col-sm-4" ng-repeat="contact in $ctrl.state.contacts.data track by contact.id">
+				                    <div ng-if="$ctrl.state.showAvatar" class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+				                        <ui-bb-avatar class="contact-avatar media img-circle img-thumbnail no-padding text-center" ng-if="$ctrl.state.showAvatar" name="contact.name" image="contact.imageAvatar"></ui-bb-avatar>
+				                    </div>
+				                    <div class="contact-data {{$ctrl.state.showAvatar ? 'col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left' : 'col-lg-12 col-md-12 col-sm-12 col-xs-12'}}">
+				                        <div ng-bind="contact.name"></div>
+				                        <div ng-bind="contact.accountIBAN"></div>
+				                    </div>
+				                </li>
+				            </ul>
+				        </div>
+				    </div>
+				</section>
+
+		Add UI dependencies
+			In that markup you are using the ui-bb-avatar-ng component but only adding it to the markup is not enough to make it work.
+
+				1. Open the file statics/collection-training/src/ext-training-contact-tiles-ng/scripts/index.js
+				2. Search
+
+					export const dependencyKeys = [
+					  ngAriaModuleKey,
+					];
+
+				3. Replace it by
+
+					import uiBbAvatarKey from 'ui-bb-avatar-ng';  
+					export const dependencyKeys = [  
+					  ngAriaModuleKey,  
+					  uiBbAvatarKey,  
+					];
+
+		Add styles to setup the tiles.
+			1. Open the file statics/collection-training/src/ext-training-contact-tiles-ng/scripts/index.js
+			2. Uncomment the following comment
+
+				// import '../styles/index.css';
+
+			3. Open the file statics/collection-training/src/ext-training-contact-tiles-ng/styles/index.css
+
+			4. Replace the content of that file by the following snippet
+
+				.ext-training-contact-tiles-ng {}
+				.ext-training-contact-tiles-ng .contact-data,
+				.ext-training-contact-tiles-ng .contact{
+				    overflow: hidden;
+				}
+
+
+
+
+
+
+
+			5. Navigate to the statics/collection-training/src/theme-training-default/styles
+
+			6. Create a new file inside and name it _extensions.scss
+			7. Create a folder and name it extensions
+			8. Create a new file inside extensions folder and name it _ext-training-contact-tiles-ng.scss
+			9. Add the next snippet inside that file
+
+				.ext-training-contact-tiles-ng .contact {
+				    border: 1px solid gray;
+				    padding: 30px;
+				}
+
+			10. Open statics/collection-training/src/theme-training-default/styles/_extensions.scss
+
+			11. Add the following snippet to load the styles for our extension
+
+				@import "extensions/ext-training-contact-tiles-ng.scss";
+
+			12. Open statics/collection-training/src/theme-training-default/styles/index.scss
+
+			13. Append the following snippet to load all the styles for all the extensions.
+
+				@import "extensions";
+
+
+		Import to CXP Manager
+			1. Navigate to statics
+			2. Use bb-cli to package the whole collection:
+
+				bb-package collection-training/src --prebuilt=collection-training/prebuilt -b sass --exclude-defaults
+
+			Check if a package.zip file has been created.
+
+			3. Use bb-cli to import the whole collection:
+
+				bb-import package.zip
+
+
+
+
+
+
+
+		Switch extension
+			1. Open your portal
+			2. Click in Contact Manager widget to see the widget top bar.
+			3. Click in the settings icon to see the preferences dialog.
+			4. Change the Extension property value to
+
+				ext-training-contact-tiles-ng
+
+			5. Click in the page link to refresh it.
+
+			6. Now you can see the widget showing contacts as tiles.
+
+
+			// Segunda Parte
+
+		Add the property to widget instance
+			1. Open Explorer App
+			2. Search for Contact Manager instance in the tree in the left sidebar and click on it.
+			3. Click on the Properties tab
+			4. Click on the + sign.
+			5. A new modal will be shown to input the new property.
+			6. Set the name input value to
+
+				randomUserApiEndpoint
+			
+			7. Set the value input value to
+
+				https://randomuser.me/api/portraits/lego/${userIndex}
+
+			Save it.
+
+
+
+
+
+		Implement the extension point
+			1. Navigate to statics/collection-training/src/ext-training-contact-tiles-ng/scripts
+			2. Create a new file and name it hooks.js
+			3. Add the following snippet of code into it:
+
+				const RANDOM_USER_API_ENDPOINT = 'randomUserApiEndpoint';
+				export default (context) => {
+				  const randomUserApiEndpoint = context.widget.getStringPreference(RANDOM_USER_API_ENDPOINT);
+				  return {
+				    processContacts: (contacts) => {
+				      return contacts.map((contact, index) => {
+				        contact.imageAvatar =
+				          (randomUserApiEndpoint) ? randomUserApiEndpoint.replace('${userIndex}', index + '.jpg') : "nullAvatar.jpg";
+				        return contact;
+				      });
+				    }
+				  };
+				};
+
+			4. Open statics/collection-training/src/ext-training-contact-tiles-ng/scripts/index.js
+
+			5. Search for:
+
+				import '../styles/index.css';
+
+			6. Below that line add:
+
+				import extHooks from './hooks';
+
+			7. Search for:
+
+				export const hooks = {};
+
+			8. Replace it by the next code snippet:
+
+				export const hooks = (context) => {
+				  return extHooks(context);
+				};
+
+		Import to CXP Manager
+			1. Navigate to statics
+			2. Use bb-cli to package the whole collection:
+
+				bb-package collection-training/src --prebuilt=collection-training/prebuilt -b sass --exclude-defaults
+
+			Check if a package.zip file has been created.
+
+			3. Use bb-cli to import the whole collection:
+
+				bb-import package.zip
+
+		Check it working
+			1. Open your portal
+			2. Refresh the page
+			3. See that the avatar is showing lego figures.
+
+---------  Ejercicio 3  -----------------------------------------------------------------------------------------------------------------------------
+
+	Create Appointments Widget
+
+		Generate a widget
+			1. Generate a widget using the generator.
+			2. Navigate to statics/collection-training/src folder
+			3. Run:
+
+				bb-generate widget ng
+
+			4. Answers to generate the widget:
+
+				Name                                        == >     widget-training-appointments-ng
+				Title                                       -        --- Accept default value ---
+				Description                                 -        --- Accept default value ---
+				Version                                     -        --- Accept default value ---
+				Do you want to create an extension now?     -        --- Accept default value ---
+				Do you want to create a model now, to       -        --- Accept default value ---
+				connect the widget with APIs?
+
+		Import to CXP Manager
+			1. Navigate to statics
+			2. Use bb-cli to package the whole collection:
+
+				bb-package collection-training/src --prebuilt=collection-training/prebuilt -b sass --exclude-defaults
+
+			Check if a package.zip file has been created.
+
+			3. Use bb-cli to import the whole collection:
+
+				bb-import package.zip
+
+		Step by step
+			1. Open your portal catalog
+			2. At the bottom of the page you can see the Enterprise Catalog section:
+			3. Input Appointments to filter the widgets:
+			4. Click on the Appointments widget to add it to your portal.
+			5. Open your portal
+			6. Create a new page "appointments". (Check that master page for it is the one that you created: mp-training)
+			7 Drop the widget on your "appointments" page.
+
+---------  Ejercicio 4  -----------------------------------------------------------------------------------------------------------------------------
+
+	Create Data Providers using RAML files
+
+		Install Tooling
+
+			1. Run:
+
+				npm install -g @bb-cli/bb-convert
+
+			2. Check that the tool is installed
+
+				bb-convert --help
+
+		Convert RAML into Data Providers
+
+			1. Extract the raml.zip file you can find in BB-Training/exercise folder in the statics folder
+
+			After unzip the file you will get three raml file paths:
+
+				- raml/advisors/advisors.raml
+
+				- raml/appointments/appointments.raml
+
+				- raml/customers/customers.raml
+
+		Navigate to statics folder
+
+			Use bb-convert to generate the data providers:
+
+				bb-convert raml raml/advisors/advisors.raml --template mock-ng --output collection-training/src -y
+				bb-convert raml raml/appointments/appointments.raml --template mock-ng --output collection-training/src -y
+				bb-convert raml raml/customers/customers.raml --template mock-ng --output collection-training/src -y
+
+
+		Require Data Providers in Model
+		
+			1. Open statics/collection-training/src/model-training-appointments-ng/scripts/index.js folder
+			2. Search for:
+
+				import Model from './appointments';
+
+			3. Below that line add the following:
+
+					import dataProviderAdvisorsKey,
+    					{ advisorsDataKey } from "mock.data-bb-advisors-http-ng";
+
+					import dataProviderAdvisorAppointmentsKey,
+    					{ advisor_AppointmentsDataKey } from "mock.data-bb-advisor_appointments-http-ng";
+
+					import dataProviderCustomersKey,
+					    { customersDataKey } from "mock.data-bb-customers-http-ng";
+
+			4. Search for:
+
+				.module(moduleKey, [
+				])
+
+			5. Replace it by:
+
+				.module(moduleKey, [
+				  dataProviderAdvisorsKey,    
+				  dataProviderAdvisorAppointmentsKey,    
+				  dataProviderCustomersKey,
+				])
+
+			6. Search for:
+
+				'$q'
+
+			7. Replace with:
+
+				'$q',
+				advisorsDataKey,
+				advisor_AppointmentsDataKey,
+				customersDataKey,
+
+		Add dependencies
+
+			1. Open statics/collection-training/src/model-training-appointments-ng/scripts/appointments.js
+			2. Search for:
+
+				export default function appointmentsModel(Promise) {
+
+			3. Replace it by:
+
+				export default function appointmentsModel(Promise, AdvisorsData, AdvisorAppointmentsData, CustomersData) {
+
+		Implement methods in model
+			1. Replace the whole content inside the appointmentsModel function by:
+
+				function getAdvisors() {
+				    return AdvisorsData
+				        .getAdvisors()
+				        .then(function (response) {
+				            return response.data;
+				        });
+				}
+				function getCustomers() {
+				    return CustomersData
+				        .getCustomers()
+				        .then(function (response) {
+				            return response.data;
+				        });
+				}
+				function getAdvisorAppointments() {
+				    return AdvisorAppointmentsData
+				        .getAdvisorAppointments()
+				        .then(function (response) {
+				            return response.data;
+				        });
+				}
+				return {
+				    getAdvisors,
+				    getCustomers,
+				    getAdvisorAppointments,
+				};
+
+		Add markup
+			1. Open statics/collection-training/src/ext-training-appointments-ng/templates/template.ng.html
+			2. Replace the content of that file by:
+
+				<section class="ext-training-appointments-ng" ng-controller="AppointmentsController as $ctrl">
+				    <header ng-if="$ctrl.appointments.length === 0">
+				        No appointments available.
+				    </header>
+				    <ul>
+				        <li ng-repeat="item in $ctrl.appointments">
+				            <section>
+				                <div>
+				                    {{item.date | date:'dd/MM/yyyy'}}
+				                </div>
+				                <div>
+				                    {{item.date | date:'HH:mm'}}
+				                </div>
+				                <div>
+				                    {{item.subject}}
+				                </div>
+				                <ul>
+				                    <li ng-repeat="guest in item.guests">
+				                        <span>{{guest.personalData.fullname}}</span>{{guest.personalData.email}}
+				                    </li>
+				                </ul>
+				            </section>
+				        </li>
+				    </ul>
+				</section>
+
+		Load appointments in controller
+			1. Open statics/collection-training/src/widget-training-appointments-ng/scripts/controller.js
+			2. Remove the next snippet:
+
+				model.load()
+				  .then(loaded => {
+				    $ctrl.items = hooks.itemsFromModel(loaded);
+				  })
+				  .catch(error => {
+				    $ctrl.error = errorMessage(error.code);
+				    bus.publish('widget-training-appointments-ng.load.failed', { error });
+				  })
+				  .then(() => { $ctrl.isLoading = false; });
+
+			3. Search for:
+
+				$ctrl.isLoading = true;
+
+			4. Below that line add:
+
+				$ctrl.appointments = [];
+				model
+				  .getAdvisorAppointments()
+				  .then(appointments => {
+				    $ctrl.appointments = appointments;
+				  })
+				  .catch(error => {
+				    $ctrl.error = errorMessage(error.code);
+				    bus.publish('widget-training-appointments-ng.load.failed',{ error });
+				  })
+				  .then(() => { $ctrl.isLoading = false; });
+
+		Import to CXP Manager
+			1. Navigate to statics
+			2. Use bb-cli to package the whole collection:
+
+				bb-package collection-training/src --prebuilt=collection-training/prebuilt -b sass --exclude-defaults
+
+			Check if a package.zip file has been created.
+
+			3. Use bb-cli to import the whole collection:
+
+				bb-import package.zip
+
+
+---------  Ejercicio 5  -----------------------------------------------------------------------------------------------------------------------------
+
+	Improve Extension with UI Components
+
+		Make your list responsive
+
+			1. Use Bootstrap classes to change the look of your list.
+			2. All the columns should have the same height.
+			3. Use other bootstrap classes and add your own styles if required.
+
+		Add markup
+
+			1. Replace the content of statics/collection-training/src/ext-training-appointments-ng/templates/template.ng.html by the following:
+
+				<section class="ext-training-appointments-ng" ng-controller="AppointmentsController as $ctrl">
+				    <header ng-if="$ctrl.appointments.length === 0">
+				        No appointments available.
+				    </header>
+				    <ul class="list-group">
+				        <li class="list-group-item" ng-repeat="item in $ctrl.appointments">
+				            <section class="row row-eq-height">
+				                <div class="col-xs-5 col-sm-4 col-md-3 col-lg-2 right-border">
+				                    <div class="text-center col-xs-3 col-sm-4 col-md-4">
+				                        <span class="fa fa-calendar fa-2x"></span>
+				                    </div>
+				                    <div class="col-xs-9 col-sm-8 col-md-8 col-lg-8">
+				                        <div class="text-left">
+				                            {{item.date | date:'dd/MM/yyyy'}}
+				                        </div>
+				                        <div class="text-left">
+				                            {{item.date | date:'HH:mm'}}
+				                        </div>
+				                    </div>
+				                </div>
+				                <div class="col-xs-7 col-sm-8 col-md-9 col-lg-10 overflow-hidden-on-xs">
+				                    <h5 ng-bind="item.subject"></h5>
+				                    <div class="col-xs-12 col-sm-9">
+				                        <ul>
+				                            <li ng-repeat="guest in item.guests">
+				                                <h6>
+				                                    <span ng-bind="guest.personalData.fullname"></span>
+				                                    <a href="mailto:{{guest.personalData.email}}"
+				                                       class="hidden-xs">&lt; {{guest.personalData.email}} &gt;</a>
+				                                </h6>
+				                            </li>
+				                        </ul>
+				                    </div>
+				                </div>
+				            </section>
+				        </li>
+				    </ul>
+				</section>
+
+	Add widget styles
+		1. Replace the content of statics/collection-training/src/ext-training-appointments-ng/styles/index.css by the following:
+
+			.ext-training-appointments-ng {}
+			.ext-training-appointments-ng .list-group {
+			    display: block;
+			}
+			.ext-training-appointments-ng .row-eq-height {
+			    display: -webkit-box;
+			    display: -webkit-flex;
+			    display: -ms-flexbox;
+			    display:         flex;
+			}
+			@media(max-width:768px) {
+			    .ext-training-appointments-ng .overflow-hidden-on-xs {
+			        overflow: hidden;
+			    }
+			}
+
+	Add theme styles
+		1. Navigate to statics/collection-training/src/theme-training-default/styles/extensions
+		2. Create a file and name it _ext-training-appointments-ng.scss
+		3. Add next code inside that file:
+
+			.ext-training-appointments-ng .right-border {
+			    border-right: 1px solid grey;
+			}
+			.ext-training-appointments-ng .urgent {
+			    background-color: #fff470;
+			}
+
+		4. Navigate to statics/collection-training/src/theme-training-default/styles/_extensions.scss
+
+		5. Append the following code:
+
+			@import "extensions/ext-training-appointments-ng.scss";
+
+
+	Import to CXP Manager
+		1. Navigate to statics
+		2. Use bb-cli to package the whole collection:
+
+			bb-package collection-training/src --prebuilt=collection-training/prebuilt -b sass --exclude-defaults
+
+		Check if a package.zip file has been created.
+
+		3. Use bb-cli to import the whole collection:
+
+			bb-import package.zip
+
+	Add markup to add dropdowns
+		1. Extract the zip file ui-training-dropdown-ng.zip you can find in BB-Training/exercise to statics/collection-training/src folder
+		2. Open statics/collection-training/src/ext-training-appointments-ng/templates/template.ng.html
+		3. Replace the content of that file by the following:
+
+			<section class="ext-training-appointments-ng" ng-controller="AppointmentsController as $ctrl">
+			    <div class="container-fluid">
+			        <div class="row">
+			            <!-- INSERT DROPDOWNS -->
+			        </div>
+			        <div class="row">
+			            <ui-training-appointments-list-ng items="$ctrl.appointments"
+			              on-select="$ctrl.onSelectAppointments(item)"></ui-training-appointments-list-ng>
+			            <h4 ng-if="$ctrl.appointments.length === 0">No appointments available.</h4>
+			        </div>
+			    </div>
+			</section>
+
+	Add behavior to the controller
+		1. Extract utils.zip file you can find in BB-Training/exercise to statics/collection-training/src/widget-training-appointments-ng/scripts
+		2. Open statics/collection-training/src/widget-training-appointments-ng/scripts/controller.js
+		3. At the beginning of that file add the next snippet of code:
+
+			import filter from './utils/filter';
+
+		4. Search for:
+
+			const $ctrl = this;
+
+		5. Below that line add the following:
+
+			$ctrl.filters = {
+			  advisor: null,
+			  customer: null
+			};
+			$ctrl.advisorSelected = null;
+			$ctrl.customerSelected = null;
+			$ctrl.advisorsHeader = 'Advisor';
+			$ctrl.customersHeader = 'Customer';
+			$ctrl.customers = [];
+			$ctrl.advisors = [];
+			$ctrl.appointments = [];
+			$ctrl.filteredAppointments = [];
+
+		6. Search for:
+
+			$ctrl.appointments = appointments;
+
+		7. Below that line add:
+
+			$ctrl.filteredAppointments = appointments.concat();
+
+		8. Search for:
+
+			items
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+**************************************************************************************************************************************************************
+**************************************************************************************************************************************************************
+**************************************************************************************************************************************************************
+**************************************************************************************************************************************************************
+**************************************************************************************************************************************************************
+
+	** widget-training-hello-world-ng
+		- assets
+		- scripts
+			- controller.js
+			- controller.spec.js
+			- default-hooks.js
+			- index.js
+			- index.spec.js
+		- index.html (incluye el extension (include) en el html) y llama al "templates/template.ng.html"
+		- model.xml ( tiene una propiedad extension -> ext-training-hello-world-ng )
+
+
+	** ext-training-hello-world-ng 
+		- templates
+			- template.ng.html	-> hace uso del controller de widget-training-hello-world-ng
+		- model.xml
+
+
+
+**************************************************************************************************************************************************************
+// Ejercicio 01
+
+	** theme-training-default  ( bb-customize item theme-bb-retail collection-training/src --new-name theme-training-default )
+		- assets
+			- fonts
+			- images
+		- styles
+		- model.xml
+
+
+
+
+
+
+// Ejercicio 2
+
+	** ext-training-contact-tiles-ng (bb-generate ext-ng ) -> (ContactController)
+		- assets
+		- scripts
+		- styles
+		- templates
+			- template.ng.html
+
+				<section class="ext-training-contact-tiles-ng" ng-controller="ContactController as $ctrl">
+				    <div class="container-fluid">
+				        <header class="row text-center">Contacts</header>
+				        <div class="row">
+				            <ul>
+				                <li class="contact col-sm-4" ng-repeat="contact in $ctrl.state.contacts.data track by contact.id">
+				                    <div ng-if="$ctrl.state.showAvatar" class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+				                        <ui-bb-avatar class="contact-avatar media img-circle img-thumbnail no-padding text-center" 
+				                        	ng-if="$ctrl.state.showAvatar" name="contact.name" image="contact.imageAvatar">
+				                        </ui-bb-avatar>
+				                    </div>
+				                    <div class="contact-data {{$ctrl.state.showAvatar ? 'col-lg-8 col-md-8 col-sm-8 col-xs-8 pull-left' : 'col-lg-12 col-md-12 col-sm-12 col-xs-12'}}">
+				                        <div ng-bind="contact.name"></div>
+				                        <div ng-bind="contact.accountIBAN"></div>
+				                    </div>
+				                </li>
+				            </ul>
+				        </div>
+				    </div>
+				</section>
+
+		- model.xml
+
+		
+
+
+
+
+
+
+
+

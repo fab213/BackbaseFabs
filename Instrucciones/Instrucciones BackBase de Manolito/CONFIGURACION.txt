@@ -1,0 +1,240 @@
+Configurar Ambiente
+
+	user:	training
+	Pass: 	tJ9DD$5b
+
+	Prerequisites
+		1. Make sure you have Internet access.
+		2. Install the latest update of Java SE Development Kit. For supported versions, please refer to platform support.
+		3. Install Maven (this article has been tested with version 3.3.9).
+
+		4. Make sure that your environment variables are set as follows:
+			JAVA_HOME = jdk_home_directory
+			M2_HOME = maven_home_directory
+			M2 = maven_bin_directory
+			MAVEN_OPTS = -Xmx512m -XX:MaxPermSize=256m (the support for MaxPermSize has been removed in JDK 8 and above)
+			PATH should contain jdk_bin_directory and maven_bin_directory
+
+		5. Confirm your Java and Maven installations by making sure both JDK and Maven can be executed from the command line. You can test it by executing the following commands:
+			javac -version
+			mvn --version (make sure Maven uses the right version of Java; if not, check your JAVA_HOME environment variable)
+
+		6. Configure Maven by editing the settings.xml file. It is located in:
+			C:\Users\user_name\.m2 under Microsoft Windows
+			~/.m2 under Unix and OS X
+
+			NOTE: If the .m2 folder does not exist, create it. If the settings.xml file does not exist, create it. The file should contain the following lines:
+
+
+			<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+			          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+			 
+			    <profiles>
+			        <profile>
+			            <id>backbase</id>
+			            <activation>
+			                <activeByDefault>true</activeByDefault>
+			            </activation>
+			            <repositories>
+			                <repository>
+			                    <id>Backbase Artifact Repository</id>
+			                    <url>https://repo.backbase.com/repo/</url>
+			                </repository>
+			            </repositories>
+			            <pluginRepositories> 
+			                <pluginRepository>
+			                    <id>Backbase Artifact Repository</id>
+			                    <url>https://repo.backbase.com/repo/</url>
+			                </pluginRepository>
+			            </pluginRepositories>
+			        </profile>
+			    </profiles>
+			    <servers>
+			        <server>
+			            <id>Backbase Artifact Repository</id>
+			            <username>user_name</username>
+			            <password>password</password>
+			        </server>
+			    </servers>
+			</settings>
+
+			Replace user_name and password with your user name and password. The password must not be encrypted. If you do not already have a Backbase Repository account, you have to request it. Existing partners and customers should request their accounts by contacting Backbase support directly at www.backbase.com/services/support. If you are new to Backbase and would like request an account, please contact your account representative.
+
+		7. Install node.js and npm. On Windows, make sure you add C:\Users\[user-name]\AppData\Roaming\npm to your PATH environment variable.
+
+		8. Install bb-cli tools by running the following command in your command window:
+			
+			npm install --global @bb-cli/bb-package @bb-cli/bb-import @bb-cli/bb-generate
+
+			The above command will install bb-generate, bb-package, and bb-import. Generators (scaffold templates) are used by the bb-generate tool to scaffold projects or items, and they need to be installed separately:
+
+			npm install --global @backbase/generator-project-statics @backbase/generator-model-ng @backbase/generator-widget @backbase/generator-ui-ng @backbase/generator-ext-ng
+
+		9. Optionally, you might also want to install:
+
+			A browser with a Web Development plugin and a REST client plugin, for example:
+				Chrome with the Developer Tools and Postman.
+				Firefox with Firebug and RESTClient, or
+
+			An advanced text editor, for example:
+				Sublime Text, or
+				Notepad++.
+
+			An IDE, for example:
+				IntelliJ IDEA, or
+				Eclipse.
+
+	Let’s Build It
+		Let’s now generate a new project with Maven. Open a command prompt and navigate to the folder where you want your Backbase project generated.
+
+		NOTE: Make sure your folder path does not contain whitespaces. This can cause errors later in the installation process.
+
+		Type the following command:
+
+			mvn archetype:generate -DarchetypeArtifactId=launchpad-archetype-CXP5.6 -DarchetypeGroupId=com.backbase.launchpad -DarchetypeVersion=2.3.0
+
+			Maven is going to prompt for some details:
+				A group id – a unique package identifier, e.g. com.backbase.training.
+				An artifact id – a name for your project. This is also the name of the folder where your project will be stored.
+				A version number and a package name – you can accept the defaults.
+
+			Confirm the values you entered by entering y, or type n to change them. After confirmation, a project structure will be created.
+
+	Now Let’s Run It
+		1. From the command prompt, go to the project directory (e.g. by typing cd artifact_id, where artifact_id is the name you have given to your project while generating the project from the archetype) and execute the following command:
+
+			mvn clean install -Pclean-database
+
+		2. Stay in the same directory and execute the following command on Windows:
+
+			run.bat
+
+			
+		Alternatively, if you are using Unix or Mac OS, execute:
+
+			sh run.sh
+
+		This will spawn four new command windows, running Portal Server, Content Services, Orchestrator, and Solr on Jetty. Wait until you see the message “Started Jetty Server” in each of the four windows.
+
+	Finally, Let’s Import Some Data
+		
+		1. Delete the existing statics folder form the root of your project.
+		2. Scaffold the new statics by executing the following command from the root of your project:
+
+			bb-generate project-statics
+
+		You will be prompted to fill in some details:
+
+			* A folder name – a name of the folder being generated; accept the default value (statics).
+			* A project group id – a unique project group identifier, e.g. com.backbase.training.
+			* A collection name – you can accept the default value (collection-training).
+			* A project version – you can accept the default value.
+			* A node version – make sure you type the exact version of node installed on your machine.
+			An npm version – make sure you type the exact version of npm installed on your machine.
+			A base collection – select collection-retail-banking by using the up and down arrow keys on your keyboard and press Enter.
+			A collection version – use 2.4.0.		
+
+		3. Open http://localhost:7777/portalserver/import in your browser. 
+			Log in as the administrator using “admin” as both your username and password.
+
+			Click the “Import” button on the bottom of the page. If the import was successful, the page will just reload and no message will be shown.
+
+		4. Change your working directory to the newly created statics folder and execute the following command:
+
+			mvn clean package
+
+		5. From the statics folder, execute the following command:
+
+			bb-import package collection-training/target/collection-training-cxp-dist-1.0-SNAPSHOT.zip
+
+		6. Download the CXP Universal Collection, and save the zip file in the statics folder. Execute the following command from the statics folder to import it:
+
+			bb-import package collection-cxp-universal-1.3.0.zip
+
+		7. Download the Retail Banking Theming, and save the zip file in the statics folder. Execute the following command from the statics folder to import it:
+
+			bb-import package collection-retail-banking-theming-2.4.0.zip
+
+		8. Download the Banking Containers, and save the zip file in the statics folder. Execute the following command from the statics folder to import it:
+
+			bb-import package collection-banking-containers-2.4.0.zip
+
+		9. Download the Retail Banking Mock Modules, and save the zip file in the statics folder. Execute the following command from the statics folder to import it:
+
+			bb-import package collection-retail-banking-mocks-2.4.1.zip
+
+		10. Download the Retail Banking Demo Portal, and save the zip file in the statics folder. Import the demo portal by:
+			accessing the CXP Manager (http://localhost:7777/portalserver/cxp-manager),
+			clicking on Create portal -> Import portal,
+			selecting the downloaded zip archive,
+			clicking on the “Import” button.
+
+		11. Mock data will only be used if explicitly enabled. To do this, navigate to your portal homepage (outside of CXP manager) and either append ?enable-mocks 
+			to enable mocks or ?disable-mocks to disable them. For example, access to following URL to enable mocks: http://localhost:7777/portalserver/retail-banking-demo/index﻿?enable-mocks.
+
+	Troubleshooting
+	
+		If there is a proxy server protecting your system, you must adapt the proxy settings of maven and node to your network policy. The following paragraphs contain useful information regarding the proxy configuration for each software package.
+
+
+		Proxy Configuration for Maven
+			Edit your .m2/settings.xml file that can be found in your user folder, and add the following configuration as a child of the settings element:
+
+				<proxies>
+				    <proxy>
+				        <id>company-proxy</id>
+				        <active>true</active>
+				        <protocol>http</protocol>
+				        <host>your-host</host>
+				        <port>your-port</port>
+				        <username>your-username</username>
+				        <password>your-password</password>
+				    </proxy>
+				</proxies>
+
+		Proxy Configuration for NPM
+			Type the following in your command window:
+
+				npm config set proxy http://<username>:<password>@<host>
+				npm config set https-proxy http://<username>:<password>@<host>
+				npm config set strict-ssl false
+
+--------------------------------------------------------------------------------------------------------------------
+
+Links
+
+	Online community and resource center used to learn all about Backbase. You can find the product documentation, how-to guides, Q&A, and so on. Please sign-up and your account will be manually approved.
+
+		https://my.backbase.com
+
+--------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+Logic-less templates  -> mustage
+Sass (Syntactically Awesome Stylesheets)
+
+Front awesome !!
+
+ 
+
+
+ https://my.backbase.com/docs/how-to-guides/article//give-your-custom-content-some-backbone-with-json-schema
+
+
+ https://my.backbase.com/docs/how-to-guides/article//bring-some-structure-to-your-content/
+
+ https://my.backbase.com/docs/product-documentation/documentation//portal/5.6.2/structcontent_template.html
+
+Here is a list of other interesting Backbase concepts you might want to read about:
+
+Perspectives
+https://my.backbase.com/docs/productdocumentation/documentation//portal/5.6.2/cxpweblibrary_perspective.html
+
+Behaviors
+https://my.backbase.com/docs/productdocumentation/documentation//portal/5.6.2/events_behaviors.html
+

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Citifanamex</title>
+
+	<link rel="stylesheet" href="css/jquery-ui.css">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/bootstrap-theme.min.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	
+</head>
+<body>
+
+<script type="text/javascript">
+
+function show_menu_user( btn, menu_show ){
+	$(menu_show).fadeOut('fast');
+	if( $(btn).hasClass('active') ){
+		console.log("Cerrar");
+		$(btn).removeClass('active');
+		$(btn).children('button').removeClass('active');
+	}else{
+		console.log("Abrir");
+		//console.log($(btn).children('button').offset())
+		setTimeout(function(){
+			$(btn).addClass('active');
+			$(btn).children('button').addClass('active');
+			$(menu_show).css({
+				'right': -104,
+				'top': 50
+			});
+			$(menu_show).fadeIn('fast');
+		},400)
+	}
+}
+
+</script>
+
+<div class="user hidden-xs" onclick="show_menu_user(this, '.user-menu' );">
+	<div class="number">6</div>
+	<button class="btn-user"></button>
+	<p class="text-right hidden-xs">Javier Álvarez Acevedo</p>
+	<p class="name_job">Empresa Demo Ejemplo de Nombre de Empresa Largo S.A.</p>
+	<div class="user-menu tt" style="right: -104px; top: 50px; display: none;">
+		<div class="arrow"></div>
+		<p><b>Datos de usuario</b> </p>
+		<p>
+			Javier Álvarez Acevedo<br>
+			javier.alvarez@citibanamex.com<br>
+			(55) 123456
+		</p>
+		<ul class="menu">
+			<li>
+				<a href="javascript:void(0);"><span class="icon ico-user"></span>Perfil de usuario</a>
+			</li>
+			<li>
+				<a href="javascript:void(0);"><span class="icon ico-messages"></span>Mensajes <span class="number">3</span> </a>
+			</li>
+			<li>
+				<a href="javascript:void(0);"><span class="icon ico-clock"></span>Pendientes de autorizar <span class="number">3</span> </a>
+			</li>
+			<li>
+				<a href="javascript:void(0);"><span class="icon ico-contact"></span>Contacto</a>
+			</li>
+			<li>
+				<a href="javascript:void(0);"><span class="icon ico-help"></span>Ayuda</a>
+			</li>
+			<li>
+				<a href="javascript:void(0);"><span class="icon ico-tour"></span>Tour</a>
+			</li>
+		</ul>
+		<a href="javascrpt:void(0);" class="language"> <span class="ico-usa"></span> English</a>
+	</div>
+</div>
+
+<script src="js/jquery-3.2.1.min.js" type="text/javascript"></script>
+<!-- <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery-ui.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+ -->
+</body>
+</html>

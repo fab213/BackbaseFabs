@@ -19,21 +19,14 @@ conect widget apis: y/n: n
 Esto se genera una carpeta de proyecto(Widget)
 
 }}}}}}}}}}}}}
-ya que se hicieron los cambios nos regresmos a
+
 cd C:\MyBackBase\MyProject\MiProyectoBB\statics
+
 
 bb-package collection-training/src --prebuilt=collection-training/prebuilt -b sass --exclude-defaults
 
+
 bb-import package.zip
 
-Esto genera el widget y ya lo puedes meter en backbase.
-
-bb-import package.zip 
 }}}}
 *Cada que se actualiza se necesita usar estos comando de nuevo.
-
-Carpetas en: C:\MyBackBase\MyProject\MiProyectoBB\statics\collection-training\src\ext-bne-nombre-proyecto-ng
-
-*styles= estilos en el index.css
-*Scripts= funciones JS, en index.js
-*Tempaltes= es la vista, como el index.html en template.ng.html
